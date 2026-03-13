@@ -1,7 +1,8 @@
+# streamlit_app_data.py
 import streamlit as st
 import pandas as pd
 import os
-import altair as alt
+import plotly.express as px
 
 st.title("📊 Exploration des données")
 
@@ -9,13 +10,10 @@ st.title("📊 Exploration des données")
 csv_path = os.path.join(os.path.dirname(__file__), "..", "insurance_data.csv")
 df = pd.read_csv(csv_path)
 
-
-
 # -----------------------------
 # Statistiques descriptives
 # -----------------------------
 st.subheader("Statistiques descriptives")
-
 st.write("Résumé statistique du dataset :")
 st.dataframe(df.describe())
 
@@ -23,12 +21,12 @@ st.dataframe(df.describe())
 # Dashboard interactif
 # -----------------------------
 st.subheader("Dashboard : corrélation entre l'âge, l'IMC et les frais médicaux")
-
 st.write("""
 Ce graphique montre la relation entre :
-- **l'âge**
-- **l'IMC**
-- **les frais médicaux**
+- **Âge**
+- **IMC**
+- **Frais médicaux**
+- **Statut fumeur** (couleur)
 """)
 
 # -----------------------------
@@ -67,25 +65,23 @@ if smoker_filter != "Tous":
     filtered_df = filtered_df[filtered_df.smoker == smoker_filter]
 
 # -----------------------------
-# Graphique interactif
+# Graphique interactif Plotly
 # -----------------------------
-chart = alt.Chart(filtered_df).mark_circle(size=80, opacity=0.7).encode(
-    x=alt.X("age", title="Âge"),
-    y=alt.Y("bmi", title="IMC"),
-    color=alt.Color(
-        "charges",
-        title="Frais médicaux (€)",
-        scale=alt.Scale(scheme="redyellowblue")
-    ),
-    tooltip=[
-        alt.Tooltip("age", title="Âge"),
-        alt.Tooltip("bmi", title="IMC"),
-        alt.Tooltip("charges", title="Charges (€)"),
-        alt.Tooltip("smoker", title="Fumeur")
-    ]
-).interactive()
+fig = px.scatter(
+    filtered_df,
+    x="age",
+    y="bmi",
+    size="charges",             # taille proportionnelle aux charges
+    color="smoker",             # couleur selon fumeur/non-fumeur
+    hover_data=["age","bmi","charges","sex","children","mutuelle_complementaire"],
+    labels={"age":"Âge", "bmi":"IMC", "charges":"Frais médicaux (€)", "smoker":"Fumeur"},
+    title="Corrélation âge, IMC et frais médicaux"
+)
 
-st.altair_chart(chart, use_container_width=True)
+fig.update_traces(marker=dict(opacity=0.7, sizemode='area', sizeref=2.*max(filtered_df.charges)/ (40.**2), line_width=1))
+fig.update_layout(legend_title_text='Statut fumeur')
+
+st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------------
 # Infos sur les données filtrées
