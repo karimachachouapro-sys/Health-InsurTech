@@ -24,10 +24,8 @@ def consentement_rgpd():
         Les informations saisies dans les formulaires ne sont pas stockées et
         servent uniquement à effectuer des estimations de frais médicaux.
         """)
-        if st.button("J'accepte les cookies"):
-            st.session_state["cookies_accepted"] = True
-            st.experimental_rerun()
-        return False
+        accept = st.button("J'accepte les cookies")
+        return accept
     return True
 
 # =========================
@@ -46,11 +44,12 @@ def check_login() -> bool:
     username_input = st.text_input("Nom d'utilisateur")
     password_input = st.text_input("Mot de passe", type="password")
 
-    if st.button("Se connecter"):
+    login_pressed = st.button("Se connecter")
+    if login_pressed:
         if username_input == USERNAME and password_input == PASSWORD:
             st.session_state["authenticated"] = True
             st.success("Connexion réussie")
-            st.experimental_rerun()
+            return True
         else:
             st.error("Nom d'utilisateur ou mot de passe incorrect")
     return False
@@ -59,13 +58,18 @@ def check_login() -> bool:
 # 3️⃣ Main App
 # =========================
 def main():
-    # Bloquer si cookies non acceptés
-    if not consentement_rgpd():
-        return
+    # Consentement RGPD
+    accepted = consentement_rgpd()
+    if not st.session_state["cookies_accepted"]:
+        if accepted:
+            st.session_state["cookies_accepted"] = True
+            st.experimental_rerun()
+        else:
+            return  # ne rien afficher avant le consentement
 
-    # Bloquer si pas encore connecté
+    # Authentification
     if not check_login():
-        return
+        return  # ne rien afficher avant login
 
     # ---------------------------
     # Page d'accueil
