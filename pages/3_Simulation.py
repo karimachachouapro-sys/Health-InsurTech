@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
 import os
 from sklearn.preprocessing import LabelEncoder
 from src.modele import model
