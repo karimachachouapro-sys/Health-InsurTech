@@ -11,7 +11,6 @@ if "cookies_accepted" not in st.session_state:
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-
 # ---------------------------
 # 1️⃣ Consentement RGPD
 # ---------------------------
@@ -29,7 +28,7 @@ if not st.session_state.cookies_accepted:
 
     if st.button("J'accepte les cookies"):
         st.session_state.cookies_accepted = True
-        st.rerun()
+        st.experimental_rerun()
 
 
 # ---------------------------
@@ -50,20 +49,17 @@ elif not st.session_state.authenticated:
     if st.button("Se connecter"):
 
         if username_input == USERNAME and password_input == PASSWORD:
-
             st.session_state.authenticated = True
             st.success("Connexion réussie")
-            st.rerun()
-
+            st.experimental_rerun()
         else:
             st.error("Nom d'utilisateur ou mot de passe incorrect")
 
 
 # ---------------------------
-# 3️⃣ Page d'accueil
+# 3️⃣ Application
 # ---------------------------
 else:
-
     st.title("🏥 Health-InsurTech")
 
     st.subheader("Présentation du projet")
@@ -78,37 +74,17 @@ else:
     interactive accessible aux utilisateurs.
     """)
 
-    st.subheader("Fonctionnalités de l'application")
+    st.subheader("Navigation")
+    page = st.radio("Choisissez une page :", ["Data", "Modèle", "Simulation"])
 
-    st.write("""
-    L'application est organisée en trois pages principales :
-    """)
+    # ---------------------------
+    # Import des pages uniquement si authentifié
+    # ---------------------------
+    if page == "Data":
+        import data  # data.py / streamlit_app_data.py
+    elif page == "Modèle":
+        import modele  # modele.py
+    elif page == "Simulation":
+        import simulation  # simulation.py
 
-    st.markdown("""
-    **📊 Data**
-
-    - Statistiques descriptives
-    - Dashboard interactif montrant la corrélation entre :
-      - l'âge
-      - l'IMC
-      - les frais médicaux
-
-    **🤖 Modèle**
-
-    - Entraînement d'un modèle de **régression linéaire**
-    - Analyse des performances du modèle (RMSE, R²)
-    - Visualisation des coefficients
-    - Analyse de l'impact des variables sur les prédictions
-
-    **🧮 Simulation**
-
-    - Formulaire interactif permettant de saisir :
-      - âge
-      - IMC
-      - statut fumeur
-      - nombre d'enfants
-      - mutuelle
-    - Estimation des frais médicaux annuels à l'aide du modèle entraîné
-    """)
-
-    st.info("Utilisez le menu latéral pour naviguer entre les différentes pages.")
+    st.info("Utilisez le menu radio pour naviguer entre les pages.")
