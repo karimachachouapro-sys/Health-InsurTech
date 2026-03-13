@@ -1,7 +1,7 @@
 # streamlit_app.py
 
 import streamlit as st
-import altair as alt
+
 
 # ---------------------------
 # 0️⃣ Initialisation session
