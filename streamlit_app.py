@@ -11,7 +11,6 @@ if "cookies_accepted" not in st.session_state:
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-
 # ---------------------------
 # 1️⃣ Consentement RGPD
 # ---------------------------
@@ -29,8 +28,7 @@ if not st.session_state.cookies_accepted:
 
     if st.button("J'accepte les cookies"):
         st.session_state.cookies_accepted = True
-        st.rerun()
-
+        st.rerun()  # <- reload après acceptation des cookies
 
 # ---------------------------
 # 2️⃣ Authentification
@@ -48,16 +46,12 @@ elif not st.session_state.authenticated:
     password_input = st.text_input("Mot de passe", type="password")
 
     if st.button("Se connecter"):
-
         if username_input == USERNAME and password_input == PASSWORD:
-
             st.session_state.authenticated = True
             st.success("Connexion réussie")
-            st.rerun()
-
+            st.rerun()  # <- reload après connexion
         else:
             st.error("Nom d'utilisateur ou mot de passe incorrect")
-
 
 # ---------------------------
 # 3️⃣ Page d'accueil
