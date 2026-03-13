@@ -4,4 +4,4 @@ scikit-learn
 streamlit
 matplotlib
 seaborn
-altair
+altair==5.1.2
