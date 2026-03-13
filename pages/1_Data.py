@@ -11,10 +11,16 @@ csv_path = os.path.join(os.path.dirname(__file__), "..", "insurance_data.csv")
 df = pd.read_csv(csv_path)
 
 # -----------------------------
+# Supprimer les colonnes sensibles
+# -----------------------------
+sensitive_cols = ['ssn', 'num_secu', 'id']  # adapter selon le nom réel
+df = df.drop(columns=[c for c in sensitive_cols if c in df.columns])
+
+# -----------------------------
 # Statistiques descriptives
 # -----------------------------
 st.subheader("Statistiques descriptives")
-st.write("Résumé statistique du dataset :")
+st.write("Résumé statistique du dataset (sans données sensibles) :")
 st.dataframe(df.describe())
 
 # -----------------------------
@@ -55,9 +61,9 @@ smoker_filter = st.sidebar.selectbox(
 
 # Appliquer filtres
 filtered_df = df[
-    (df.age >= age_range[0]) &
-    (df.age <= age_range[1]) &
-    (df.bmi >= bmi_range[0]) &
+    (df.age >= age_range[0]) & 
+    (df.age <= age_range[1]) & 
+    (df.bmi >= bmi_range[0]) & 
     (df.bmi <= bmi_range[1])
 ]
 
@@ -67,18 +73,26 @@ if smoker_filter != "Tous":
 # -----------------------------
 # Graphique interactif Plotly
 # -----------------------------
+hover_cols = ["age", "bmi", "charges", "sex", "children", "mutuelle_complementaire"]
+hover_cols = [c for c in hover_cols if c in filtered_df.columns]  # enlever sensible
+
 fig = px.scatter(
     filtered_df,
     x="age",
     y="bmi",
-    size="charges",             # taille proportionnelle aux charges
-    color="smoker",             # couleur selon fumeur/non-fumeur
-    hover_data=["age","bmi","charges","sex","children","mutuelle_complementaire"],
+    size="charges",
+    color="smoker",
+    hover_data=hover_cols,
     labels={"age":"Âge", "bmi":"IMC", "charges":"Frais médicaux (€)", "smoker":"Fumeur"},
     title="Corrélation âge, IMC et frais médicaux"
 )
 
-fig.update_traces(marker=dict(opacity=0.7, sizemode='area', sizeref=2.*max(filtered_df.charges)/ (40.**2), line_width=1))
+# Ajuster la taille des points pour que ça reste lisible
+if not filtered_df.empty:
+    sizeref = 2.*filtered_df.charges.max()/(40.**2)
+else:
+    sizeref = 1
+fig.update_traces(marker=dict(opacity=0.7, sizemode='area', sizeref=sizeref, line_width=1))
 fig.update_layout(legend_title_text='Statut fumeur')
 
 st.plotly_chart(fig, use_container_width=True)
