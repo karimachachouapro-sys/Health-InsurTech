@@ -13,7 +13,7 @@ df = pd.read_csv(csv_path)
 # -----------------------------
 # Supprimer les colonnes sensibles
 # -----------------------------
-sensitive_cols = ['ssn', 'num_secu', 'id']  # adapter selon le nom réel
+sensitive_cols = ['numero_secu_sociale']  # supprimer le SSN
 df = df.drop(columns=[c for c in sensitive_cols if c in df.columns])
 
 # -----------------------------
@@ -74,7 +74,7 @@ if smoker_filter != "Tous":
 # Graphique interactif Plotly
 # -----------------------------
 hover_cols = ["age", "bmi", "charges", "sex", "children", "mutuelle_complementaire"]
-hover_cols = [c for c in hover_cols if c in filtered_df.columns]  # enlever sensible
+hover_cols = [c for c in hover_cols if c in filtered_df.columns]  # enlever sensibles
 
 fig = px.scatter(
     filtered_df,
@@ -87,7 +87,7 @@ fig = px.scatter(
     title="Corrélation âge, IMC et frais médicaux"
 )
 
-# Ajuster la taille des points pour que ça reste lisible
+# Ajuster la taille des points
 if not filtered_df.empty:
     sizeref = 2.*filtered_df.charges.max()/(40.**2)
 else:
