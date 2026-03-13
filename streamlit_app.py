@@ -2,7 +2,6 @@
 
 import streamlit as st
 
-
 # ---------------------------
 # 0️⃣ Initialisation session
 # ---------------------------
