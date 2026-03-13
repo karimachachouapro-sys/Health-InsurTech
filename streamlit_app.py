@@ -28,7 +28,7 @@ if not st.session_state.cookies_accepted:
 
     if st.button("J'accepte les cookies"):
         st.session_state.cookies_accepted = True
-        st.rerun()  # <- reload après acceptation des cookies
+        st.experimental_rerun()  # reload après acceptation
 
 # ---------------------------
 # 2️⃣ Authentification
@@ -36,7 +36,6 @@ if not st.session_state.cookies_accepted:
 elif not st.session_state.authenticated:
 
     st.title("🔐 Connexion à l'application")
-
     st.write("Veuillez vous connecter pour accéder aux fonctionnalités.")
 
     USERNAME = "admin"
@@ -48,20 +47,19 @@ elif not st.session_state.authenticated:
     if st.button("Se connecter"):
         if username_input == USERNAME and password_input == PASSWORD:
             st.session_state.authenticated = True
-            st.success("Connexion réussie")
-            st.rerun()  # <- reload après connexion
+            st.success("Connexion réussie !")
+            st.experimental_rerun()  # reload après connexion
         else:
-            st.error("Nom d'utilisateur ou mot de passe incorrect")
+            st.error("Nom d'utilisateur ou mot de passe incorrect.")
 
 # ---------------------------
-# 3️⃣ Page d'accueil
+# 3️⃣ Contenu de l'application
 # ---------------------------
 else:
-
+    # Tout le contenu de l'application se trouve ici
     st.title("🏥 Health-InsurTech")
 
     st.subheader("Présentation du projet")
-
     st.write("""
     **Health-InsurTech** est une application de data science permettant
     d'explorer un dataset de frais médicaux et d'estimer les charges
@@ -73,11 +71,6 @@ else:
     """)
 
     st.subheader("Fonctionnalités de l'application")
-
-    st.write("""
-    L'application est organisée en trois pages principales :
-    """)
-
     st.markdown("""
     **📊 Data**
 
@@ -105,4 +98,4 @@ else:
     - Estimation des frais médicaux annuels à l'aide du modèle entraîné
     """)
 
-    st.info("Utilisez le menu latéral pour naviguer entre les différentes pages.")
+    st.info("Utilisez le menu latéral pour naviguer entre les pages.")
