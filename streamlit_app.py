@@ -1,5 +1,4 @@
 # streamlit_app.py
-
 import streamlit as st
 
 # ---------------------------
@@ -11,54 +10,55 @@ if "cookies_accepted" not in st.session_state:
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-# ---------------------------
-# 1️⃣ Consentement RGPD
-# ---------------------------
-if not st.session_state.cookies_accepted:
+def main():
+    # ---------------------------
+    # 1️⃣ Consentement RGPD
+    # ---------------------------
+    if not st.session_state.cookies_accepted:
 
-    st.title("🍪 Consentement RGPD")
+        st.title("🍪 Consentement RGPD")
+        st.write("""
+        Cette application utilise uniquement des cookies techniques nécessaires
+        au bon fonctionnement de l'application.
 
-    st.write("""
-    Cette application utilise uniquement des cookies techniques nécessaires
-    au bon fonctionnement de l'application.
+        Les informations saisies dans les formulaires ne sont pas stockées et
+        servent uniquement à effectuer des estimations de frais médicaux.
+        """)
 
-    Les informations saisies dans les formulaires ne sont pas stockées et
-    servent uniquement à effectuer des estimations de frais médicaux.
-    """)
+        if st.button("J'accepte les cookies"):
+            st.session_state.cookies_accepted = True
+            st.experimental_rerun()  # stable ici, après clic
 
-    if st.button("J'accepte les cookies"):
-        st.session_state.cookies_accepted = True
-        st.experimental_rerun()  # reload après acceptation
+        return  # bloquer tout le reste jusqu'à acceptation
 
-# ---------------------------
-# 2️⃣ Authentification
-# ---------------------------
-elif not st.session_state.authenticated:
+    # ---------------------------
+    # 2️⃣ Authentification
+    # ---------------------------
+    if not st.session_state.authenticated:
 
-    st.title("🔐 Connexion à l'application")
-    st.write("Veuillez vous connecter pour accéder aux fonctionnalités.")
+        st.title("🔐 Connexion à l'application")
+        st.write("Veuillez vous connecter pour accéder aux fonctionnalités.")
 
-    USERNAME = "admin"
-    PASSWORD = "admin"
+        USERNAME = "admin"
+        PASSWORD = "admin"
 
-    username_input = st.text_input("Nom d'utilisateur")
-    password_input = st.text_input("Mot de passe", type="password")
+        username_input = st.text_input("Nom d'utilisateur")
+        password_input = st.text_input("Mot de passe", type="password")
 
-    if st.button("Se connecter"):
-        if username_input == USERNAME and password_input == PASSWORD:
-            st.session_state.authenticated = True
-            st.success("Connexion réussie !")
-            st.experimental_rerun()  # reload après connexion
-        else:
-            st.error("Nom d'utilisateur ou mot de passe incorrect.")
+        if st.button("Se connecter"):
+            if username_input == USERNAME and password_input == PASSWORD:
+                st.session_state.authenticated = True
+                st.success("Connexion réussie !")
+                st.experimental_rerun()
+            else:
+                st.error("Nom d'utilisateur ou mot de passe incorrect.")
 
-# ---------------------------
-# 3️⃣ Contenu de l'application
-# ---------------------------
-else:
-    # Tout le contenu de l'application se trouve ici
+        return  # bloquer tout le reste jusqu'à authentification
+
+    # ---------------------------
+    # 3️⃣ Contenu de l'application
+    # ---------------------------
     st.title("🏥 Health-InsurTech")
-
     st.subheader("Présentation du projet")
     st.write("""
     **Health-InsurTech** est une application de data science permettant
@@ -99,3 +99,6 @@ else:
     """)
 
     st.info("Utilisez le menu latéral pour naviguer entre les pages.")
+
+if __name__ == "__main__":
+    main()
